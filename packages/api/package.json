@@ -1,0 +1,29 @@
+{
+  "name": "@uni-gpt/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@prisma/client": "catalog:",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "@uni-gpt/auth": "workspace:*",
+    "@uni-gpt/db": "workspace:*",
+    "@uni-gpt/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/express": "catalog:",
+    "@uni-gpt/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
