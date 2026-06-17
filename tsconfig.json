@@ -1,0 +1,6 @@
+{
+  "extends": "@uni-gpt/config/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  }
+}
