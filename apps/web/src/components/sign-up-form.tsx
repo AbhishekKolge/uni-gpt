@@ -33,8 +33,10 @@ export default function SignUpForm({
 				},
 				{
 					onSuccess: () => {
-						router.push("/dashboard");
-						toast.success("Sign up successful");
+						// requireEmailVerification is on — the user must verify before using
+						// the app, so hand off to the verify-email page (not the dashboard).
+						router.push("/verify-email");
+						toast.success("Account created. Check your email to verify.");
 					},
 					onError: (error) => {
 						toast.error(error.error.message || error.error.statusText);
