@@ -4,6 +4,7 @@ import { env } from "@uni-gpt/env/server";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
+import { sendResetPasswordEmail, sendVerificationEmail } from "./lib/email";
 import { polarClient } from "./lib/payments";
 
 export function createAuth() {
@@ -18,6 +19,22 @@ export function createAuth() {
 		trustedOrigins: [env.CORS_ORIGIN],
 		emailAndPassword: {
 			enabled: true,
+			requireEmailVerification: true,
+			resetPasswordTokenExpiresIn: 3600, // 1 hour
+			// biome-ignore lint/suspicious/useAwait: helpers are fire-and-forget; the callback must return Promise<void>.
+			sendResetPassword: async ({ user, url }) => {
+				// better-auth's `url` already routes the reset through /api/auth then to
+				// our redirectTo; we send it verbatim. Web page reads ?token=… (Task 9).
+				sendResetPasswordEmail({ to: user.email, url });
+			},
+		},
+		emailVerification: {
+			sendOnSignUp: true,
+			autoSignInAfterVerification: true,
+			// biome-ignore lint/suspicious/useAwait: helper is fire-and-forget; the callback must return Promise<void>.
+			sendVerificationEmail: async ({ user, url }) => {
+				sendVerificationEmail({ to: user.email, url });
+			},
 		},
 		secret: env.BETTER_AUTH_SECRET,
 		baseURL: env.BETTER_AUTH_URL,
