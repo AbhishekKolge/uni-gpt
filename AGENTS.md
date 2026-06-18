@@ -1,5 +1,7 @@
 # Ultracite Code Standards
 
+> **Project context:** uni-gpt is an AI chat app built phase-by-phase. Read `CLAUDE.md`, the master spec `docs/superpowers/specs/2026-06-18-uni-gpt-design.md`, and the relevant `plan/NN-*.md` before working. The `.claude/skills/uni-gpt` skill carries the pinned versions + Mastra v1 API gotchas + the mandatory supply-chain pin rule. The rules below (Ultracite) govern code style.
+
 This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
 
 ## Quick Reference
@@ -72,6 +74,7 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 
 ### Security
 
+- **Supply-chain — verify every new package before installing.** Before adding any dependency (`pnpm add`, `npm i`, `pnpm dlx`, `npx`, …), web-search the exact package + version for malware / supply-chain advisories, typosquatting, and provenance (source repo, publisher, release age, download counts); never install unverified or freshly published packages. Pin exact `@mastra/*` versions. A `PreToolUse` hook gates new-package installs. Full policy: `CLAUDE.md` → Supply-chain.
 - Add `rel="noopener"` when using `target="_blank"` on links
 - Avoid `dangerouslySetInnerHTML` unless absolutely necessary
 - Don't use `eval()` or assign directly to `document.cookie`
