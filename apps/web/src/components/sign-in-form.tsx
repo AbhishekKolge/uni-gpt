@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@uni-gpt/ui/components/button";
 import { Input } from "@uni-gpt/ui/components/input";
 import { Label } from "@uni-gpt/ui/components/label";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
@@ -9,6 +10,7 @@ import z from "zod";
 import { authClient } from "@/lib/auth-client";
 
 import Loader from "./loader";
+import SocialAuthButtons from "./social-auth-buttons";
 
 export default function SignInForm({
 	onSwitchToSignUp,
@@ -127,6 +129,23 @@ export default function SignInForm({
 					)}
 				</form.Subscribe>
 			</form>
+
+			<div className="mt-4 text-right text-sm">
+				<Link
+					className="text-indigo-600 hover:text-indigo-800"
+					href="/forgot-password"
+				>
+					Forgot password?
+				</Link>
+			</div>
+
+			<div className="my-4 flex items-center gap-2 text-muted-foreground text-xs">
+				<span className="h-px flex-1 bg-border" />
+				OR
+				<span className="h-px flex-1 bg-border" />
+			</div>
+
+			<SocialAuthButtons />
 
 			<div className="mt-4 text-center">
 				<Button
