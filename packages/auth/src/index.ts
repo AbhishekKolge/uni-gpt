@@ -36,6 +36,12 @@ export function createAuth() {
 				sendVerificationEmail({ to: user.email, url });
 			},
 		},
+		socialProviders: {
+			google: {
+				clientId: env.GOOGLE_CLIENT_ID,
+				clientSecret: env.GOOGLE_CLIENT_SECRET,
+			},
+		},
 		secret: env.BETTER_AUTH_SECRET,
 		baseURL: env.BETTER_AUTH_URL,
 		advanced: {
