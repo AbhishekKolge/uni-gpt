@@ -1,0 +1,174 @@
+"use client";
+
+import { Button } from "@uni-gpt/ui/components/button";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@uni-gpt/ui/components/card";
+import { Input } from "@uni-gpt/ui/components/input";
+import { Label } from "@uni-gpt/ui/components/label";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { authClient } from "@/lib/auth-client";
+
+interface Passkey {
+	id: string;
+	name?: string | null;
+}
+interface Session {
+	token: string;
+	userAgent?: string | null;
+}
+
+export default function SecuritySection() {
+	const router = useRouter();
+	const [passkeys, setPasskeys] = useState<Passkey[]>([]);
+	const [sessions, setSessions] = useState<Session[]>([]);
+	const [password, setPassword] = useState("");
+
+	const loadPasskeys = useCallback(async () => {
+		const { data } = await authClient.passkey.listUserPasskeys();
+		setPasskeys((data ?? []) as Passkey[]);
+	}, []);
+
+	const loadSessions = useCallback(async () => {
+		const { data } = await authClient.listSessions();
+		setSessions((data ?? []) as Session[]);
+	}, []);
+
+	useEffect(() => {
+		loadPasskeys().catch(() => undefined);
+		loadSessions().catch(() => undefined);
+	}, [loadPasskeys, loadSessions]);
+
+	const addPasskey = async () => {
+		const res = await authClient.passkey.addPasskey();
+		if (res?.error) {
+			toast.error(res.error.message ?? "Could not add passkey");
+			return;
+		}
+		toast.success("Passkey added");
+		await loadPasskeys();
+	};
+
+	const removePasskey = async (id: string) => {
+		await authClient.passkey.deletePasskey({ id });
+		toast.success("Passkey removed");
+		await loadPasskeys();
+	};
+
+	const revoke = async (token: string) => {
+		await authClient.revokeSession({ token });
+		toast.success("Session revoked");
+		await loadSessions();
+	};
+
+	const deleteAccount = async () => {
+		await authClient.deleteUser(
+			{ password },
+			{
+				onSuccess: () => {
+					toast.success("Account deleted");
+					router.push("/");
+				},
+				onError: (error) => {
+					toast.error(error.error.message || error.error.statusText);
+				},
+			}
+		);
+	};
+
+	return (
+		<div className="mx-auto mt-10 w-full max-w-2xl space-y-6 p-6">
+			<Card>
+				<CardHeader>
+					<CardTitle>Passkeys</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-3">
+					{passkeys.length === 0 ? (
+						<p className="text-muted-foreground text-sm">No passkeys yet.</p>
+					) : (
+						passkeys.map((pk) => (
+							<div className="flex items-center justify-between" key={pk.id}>
+								<span>{pk.name ?? "Passkey"}</span>
+								<Button
+									onClick={() => {
+										removePasskey(pk.id).catch(() => undefined);
+									}}
+									size="sm"
+									variant="destructive"
+								>
+									Remove
+								</Button>
+							</div>
+						))
+					)}
+					<Button
+						onClick={() => {
+							addPasskey().catch(() => undefined);
+						}}
+						variant="outline"
+					>
+						Add passkey
+					</Button>
+				</CardContent>
+			</Card>
+
+			<Card>
+				<CardHeader>
+					<CardTitle>Active sessions</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-3">
+					{sessions.map((s) => (
+						<div className="flex items-center justify-between" key={s.token}>
+							<span className="truncate text-sm">
+								{s.userAgent ?? "Unknown device"}
+							</span>
+							<Button
+								onClick={() => {
+									revoke(s.token).catch(() => undefined);
+								}}
+								size="sm"
+								variant="outline"
+							>
+								Revoke
+							</Button>
+						</div>
+					))}
+				</CardContent>
+			</Card>
+
+			<Card>
+				<CardHeader>
+					<CardTitle>Delete account</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-3">
+					<p className="text-muted-foreground text-sm">
+						Permanently delete your account and all data. This cannot be undone.
+					</p>
+					<div className="space-y-2">
+						<Label htmlFor="confirm-password">Confirm password</Label>
+						<Input
+							id="confirm-password"
+							onChange={(e) => setPassword(e.target.value)}
+							type="password"
+							value={password}
+						/>
+					</div>
+					<Button
+						onClick={() => {
+							deleteAccount().catch(() => undefined);
+						}}
+						variant="destructive"
+					>
+						Delete my account
+					</Button>
+				</CardContent>
+			</Card>
+		</div>
+	);
+}
