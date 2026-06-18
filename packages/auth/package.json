@@ -17,6 +17,7 @@
     "@better-auth/sso": "catalog:",
     "@polar-sh/better-auth": "catalog:",
     "@polar-sh/sdk": "^0.47.1",
+    "@simplewebauthn/server": "13.3.1",
     "@uni-gpt/db": "workspace:*",
     "@uni-gpt/env": "workspace:*",
     "better-auth": "catalog:",
