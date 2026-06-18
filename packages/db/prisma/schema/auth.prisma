@@ -9,7 +9,6 @@ model User {
   sessions      Session[]
   accounts      Account[]
   passkeys      Passkey[]
-  ssoProviders  SsoProvider[]
 
   @@unique([email])
   @@map("user")
@@ -81,21 +80,4 @@ model Passkey {
   @@index([userId])
   @@index([credentialID])
   @@map("passkey")
-}
-
-// Reconciled from @better-auth/sso@1.6.19 plugin schema. Table name is camelCase
-// (@@map("ssoProvider")). domainVerified is omitted (only added when the plugin's
-// domainVerification option is enabled, which it is not here).
-model SsoProvider {
-  id             String  @id
-  issuer         String
-  oidcConfig     String?
-  samlConfig     String?
-  userId         String?
-  user           User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  providerId     String  @unique
-  organizationId String?
-  domain         String
-
-  @@map("ssoProvider")
 }

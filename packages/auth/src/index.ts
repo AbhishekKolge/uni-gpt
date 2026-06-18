@@ -1,5 +1,4 @@
 import { passkey } from "@better-auth/passkey";
-import { sso } from "@better-auth/sso";
 import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { createPrismaClient } from "@uni-gpt/db";
 import { env } from "@uni-gpt/env/server";
@@ -101,7 +100,6 @@ export function createAuth() {
 				rpName: env.PASSKEY_RP_NAME,
 				origin: env.PASSKEY_ORIGIN,
 			}),
-			sso(),
 		],
 	});
 }
