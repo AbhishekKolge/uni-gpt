@@ -297,6 +297,9 @@ importers:
       '@polar-sh/sdk':
         specifier: ^0.47.1
         version: 0.47.1
+      '@simplewebauthn/server':
+        specifier: 13.3.1
+        version: 13.3.1
       '@uni-gpt/db':
         specifier: workspace:*
         version: link:../db
