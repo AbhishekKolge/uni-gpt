@@ -52,3 +52,7 @@ coverage
 .cache
 tmp
 temp
+
+# Project planning + spec (local only, not committed)
+/plan/
+/docs/

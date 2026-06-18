@@ -1,4 +1,31 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm db:*)",
+      "Bash(pnpm fix)",
+      "Bash(pnpm check)",
+      "Bash(pnpm check-types)",
+      "Bash(pnpm build)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm -F *)",
+      "Bash(pnpm dlx *)",
+      "Bash(git status)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git restore:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(curl -s http://localhost:*)",
+      "Bash(curl -i http://localhost:*)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
@@ -9,6 +36,17 @@
           }
         ],
         "matcher": "Write|Edit"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "c=$(jq -r '.tool_input.command // empty' 2>/dev/null); printf '%s' \"$c\" | grep -Eq -e '(^|[[:space:]])(pnpm|npm|yarn|bun)([[:space:]]+[^[:space:]]+)*[[:space:]]+add([[:space:]]+-[^[:space:]]+)*[[:space:]]+[a-zA-Z0-9@]' -e '(^|[[:space:]])(pnpm|npm|yarn)([[:space:]]+[^[:space:]]+)*[[:space:]]+(install|i)([[:space:]]+-[^[:space:]]+)*[[:space:]]+[a-zA-Z0-9@]' -e '(^|[[:space:]])(pnpm[[:space:]]+dlx|npx|bunx)[[:space:]]+(-[^[:space:]]+[[:space:]]+)*[a-zA-Z0-9@]' && printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"ask\",\"permissionDecisionReason\":\"Supply-chain check (CLAUDE.md): before adding/installing or dlx/npx-running this package, web-search the exact package + version for malware, supply-chain compromise, typosquatting, and known-bad versions; verify publisher, source repo, and release age; pin exact @mastra/* versions; after install run: grep -c easy-day-js pnpm-lock.yaml (must print 0). Approve only once verified safe.\"}}' || true"
+          }
+        ]
       }
     ]
   }
