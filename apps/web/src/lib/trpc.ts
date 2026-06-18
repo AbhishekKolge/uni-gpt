@@ -1,4 +1,4 @@
-import { QueryCache, QueryClient } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@uni-gpt/api/routers/index";
@@ -15,6 +15,13 @@ export const queryClient = new QueryClient({
 					},
 				},
 			});
+		},
+	}),
+	mutationCache: new MutationCache({
+		onError: (error) => {
+			toast.error(
+				error instanceof Error ? error.message : "Something went wrong"
+			);
 		},
 	}),
 });
