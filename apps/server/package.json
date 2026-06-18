@@ -10,7 +10,6 @@
     "start": "node dist/index.mjs"
   },
   "dependencies": {
-    "@hono/trpc-server": "^0.4.0",
     "@trpc/server": "catalog:",
     "@uni-gpt/api": "workspace:*",
     "@uni-gpt/auth": "workspace:*",

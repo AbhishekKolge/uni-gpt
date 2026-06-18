@@ -96,9 +96,6 @@ importers:
 
   apps/server:
     dependencies:
-      '@hono/trpc-server':
-        specifier: ^0.4.0
-        version: 0.4.2(@trpc/server@11.17.0(typescript@6.0.3))(hono@4.12.25)
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.17.0(typescript@6.0.3)
@@ -987,13 +984,6 @@ packages:
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
-
-  '@hono/trpc-server@0.4.2':
-    resolution: {integrity: sha512-3TDrc42CZLgcTFkXQba+y7JlRWRiyw1AqhLqztWyNS2IFT+3bHld0lxKdGBttCtGKHYx0505dM67RMazjhdZqw==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@trpc/server': ^10.10.0 || >11.0.0-rc
-      hono: '>=4.0.0'
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -4373,11 +4363,6 @@ snapshots:
 
   '@hono/node-server@1.19.14(hono@4.12.25)':
     dependencies:
-      hono: 4.12.25
-
-  '@hono/trpc-server@0.4.2(@trpc/server@11.17.0(typescript@6.0.3))(hono@4.12.25)':
-    dependencies:
-      '@trpc/server': 11.17.0(typescript@6.0.3)
       hono: 4.12.25
 
   '@img/colour@1.1.0':
