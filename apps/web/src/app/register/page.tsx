@@ -1,10 +1,5 @@
-"use client";
+import RegisterPage from "@/modules/auth/pages/register-page";
 
-import { useRouter } from "next/navigation";
-
-import SignUpForm from "@/modules/auth/components/sign-up-form";
-
-export default function RegisterPage() {
-	const router = useRouter();
-	return <SignUpForm onSwitchToSignIn={() => router.push("/login")} />;
+export default function Page() {
+	return <RegisterPage />;
 }
