@@ -1,26 +1,26 @@
 #!/bin/sh
-# Check if there are any staged files
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
-if [ -z "$STAGED_FILES" ]; then
-  echo "No staged files to format"
-  exit 0
-fi
+# Pre-commit: format + lint (ultracite/biome) on staged files, then type-check.
 
-# Run formatter, capturing the exit code so we can still re-stage and report
-FORMAT_EXIT_CODE=0
-pnpm exec ultracite fix || FORMAT_EXIT_CODE=$?
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx|js|jsx|mjs|cjs|json|jsonc|css)$')
 
-# Re-stage files that were already staged
-echo "$STAGED_FILES" | while IFS= read -r file; do
-  if [ -f "$file" ]; then
-    git add -- "$file"
+if [ -n "$STAGED_FILES" ]; then
+  # 1. Format + auto-fix lint on staged files only (fast)
+  FIX_EXIT_CODE=0
+  echo "$STAGED_FILES" | xargs pnpm exec ultracite fix || FIX_EXIT_CODE=$?
+
+  # Re-stage anything the formatter rewrote
+  echo "$STAGED_FILES" | while IFS= read -r file; do
+    [ -f "$file" ] && git add -- "$file"
+  done
+
+  if [ "$FIX_EXIT_CODE" -ne 0 ]; then
+    echo "✗ ultracite reported unfixable lint errors — commit aborted"
+    exit "$FIX_EXIT_CODE"
   fi
-done
-
-if [ $FORMAT_EXIT_CODE -ne 0 ]; then
-  echo "Ultracite found issues that could not be auto-fixed."
-  exit $FORMAT_EXIT_CODE
 fi
 
-echo "✨ Files formatted by Ultracite"
-# ultracite end
+# 2. Type-check the whole workspace (turbo-cached; only changed packages re-run)
+echo "▶ check-types..."
+pnpm check-types || { echo "✗ type errors — commit aborted"; exit 1; }
+
+echo "✨ format + lint + types OK"

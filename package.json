@@ -20,6 +20,8 @@
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
+    "lint": "ultracite check",
+    "format": "ultracite fix",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "prepare": "husky"

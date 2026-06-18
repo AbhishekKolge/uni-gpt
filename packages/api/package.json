@@ -9,7 +9,9 @@
       "default": "./src/*.ts"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "check-types": "tsc -b"
+  },
   "dependencies": {
     "@prisma/client": "catalog:",
     "@trpc/client": "catalog:",
