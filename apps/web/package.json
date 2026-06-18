@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@better-auth/passkey": "catalog:",
-    "@better-auth/sso": "catalog:",
     "@polar-sh/better-auth": "catalog:",
     "@tanstack/react-form": "^1.28.0",
     "@tanstack/react-query": "^5.90.12",

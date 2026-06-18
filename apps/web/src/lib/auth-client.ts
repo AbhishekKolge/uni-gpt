@@ -1,5 +1,4 @@
 import { passkeyClient } from "@better-auth/passkey/client";
-import { ssoClient } from "@better-auth/sso/client";
 import { polarClient } from "@polar-sh/better-auth/client";
 import type { auth } from "@uni-gpt/auth";
 import { env } from "@uni-gpt/env/web";
@@ -13,7 +12,6 @@ export const authClient = createAuthClient({
 	plugins: [
 		polarClient(),
 		passkeyClient(),
-		ssoClient(),
 		// Types the additional User columns (credits/role land in later phases) into the session.
 		inferAdditionalFields<typeof auth>(),
 	],
