@@ -8,6 +8,7 @@ import { polarClient } from "./lib/payments";
 
 export function createAuth() {
 	const prisma = createPrismaClient();
+	const isProd = env.NODE_ENV === "production";
 
 	return betterAuth({
 		database: prismaAdapter(prisma, {
@@ -22,8 +23,8 @@ export function createAuth() {
 		baseURL: env.BETTER_AUTH_URL,
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: isProd ? "none" : "lax",
+				secure: isProd,
 				httpOnly: true,
 			},
 		},
