@@ -15,7 +15,7 @@
     "db:migrate": "prisma migrate dev",
     "postinstall": "prisma generate",
     "db:studio": "prisma studio",
-    "db:setup": "prisma db execute --file ./prisma/sql/0001_enable_pgvector.sql --schema ./prisma/schema",
+    "db:setup": "prisma db execute --file ./prisma/sql/0001_enable_pgvector.sql",
     "check-types": "tsc -b"
   },
   "dependencies": {
