@@ -7,6 +7,10 @@ allowBuilds:
   sharp: true
   "@prisma/engines": true
   prisma: true
+# Supply-chain: refuse versions published < 1 day ago (blocks fresh malicious releases)
+minimumReleaseAge: 1440
+# Supply-chain: block git/http/file (exotic) transitive deps
+blockExoticSubdeps: true
 catalog:
   dotenv: ^17.2.2
   zod: ^4.1.13
