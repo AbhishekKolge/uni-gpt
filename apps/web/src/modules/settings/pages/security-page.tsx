@@ -26,7 +26,7 @@ type Session = NonNullable<
 
 export function SecurityPage() {
 	const router = useRouter();
-	const { data: session, isPending } = authClient.useSession();
+	const { data: session } = authClient.useSession();
 	const [passkeys, setPasskeys] = useState<Passkey[]>([]);
 	const [sessions, setSessions] = useState<Session[]>([]);
 	const [password, setPassword] = useState("");
@@ -40,12 +40,6 @@ export function SecurityPage() {
 		const { data } = await authClient.listSessions();
 		setSessions(data ?? []);
 	}, []);
-
-	useEffect(() => {
-		if (!(isPending || session)) {
-			router.push("/login");
-		}
-	}, [isPending, session, router]);
 
 	useEffect(() => {
 		if (session) {
@@ -90,10 +84,6 @@ export function SecurityPage() {
 			}
 		);
 	};
-
-	if (isPending || !session) {
-		return null;
-	}
 
 	return (
 		<div className="mx-auto mt-10 w-full max-w-2xl space-y-6 p-6">
