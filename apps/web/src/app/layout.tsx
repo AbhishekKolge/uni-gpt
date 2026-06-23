@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 
 import "../index.css";
-import Header from "@/components/header";
+import Header from "@/components/layout/header";
 import Providers from "@/providers";
 
 const fontSans = Outfit({

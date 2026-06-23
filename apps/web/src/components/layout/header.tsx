@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
-
+import UserMenu from "../account/user-menu";
 import { ModeToggle } from "./mode-toggle";
-import UserMenu from "./user-menu";
 
 export default function Header() {
 	const links = [

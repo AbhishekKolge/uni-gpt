@@ -24,8 +24,9 @@ interface Session {
 	userAgent?: string | null;
 }
 
-export default function SecuritySection() {
+export function SecurityPage() {
 	const router = useRouter();
+	const { data: session, isPending } = authClient.useSession();
 	const [passkeys, setPasskeys] = useState<Passkey[]>([]);
 	const [sessions, setSessions] = useState<Session[]>([]);
 	const [password, setPassword] = useState("");
@@ -41,9 +42,17 @@ export default function SecuritySection() {
 	}, []);
 
 	useEffect(() => {
-		loadPasskeys().catch(() => undefined);
-		loadSessions().catch(() => undefined);
-	}, [loadPasskeys, loadSessions]);
+		if (!(isPending || session)) {
+			router.push("/login");
+		}
+	}, [isPending, session, router]);
+
+	useEffect(() => {
+		if (session) {
+			loadPasskeys().catch(() => undefined);
+			loadSessions().catch(() => undefined);
+		}
+	}, [session, loadPasskeys, loadSessions]);
 
 	const addPasskey = async () => {
 		const res = await authClient.passkey.addPasskey();
@@ -81,6 +90,10 @@ export default function SecuritySection() {
 			}
 		);
 	};
+
+	if (isPending || !session) {
+		return null;
+	}
 
 	return (
 		<div className="mx-auto mt-10 w-full max-w-2xl space-y-6 p-6">

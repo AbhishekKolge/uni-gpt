@@ -46,14 +46,14 @@ apps/web/src/
       utils/                        # const.ts, schema.ts
     experiment/
       components/
-        forms/ cards/ alerts/ dialogs/ common/
+        forms/ cards/ alerts/ dialogs/ generic/
       hooks/                        # use-create-experiment, use-experiment-filters (zustand), ...
       pages/                        # experiment.tsx (named export Experiment)
       utils/                        # const.ts, schema.ts, helper.ts
       details/                      # SUB-MODULE — same shape, recursive
         types/                      # index.ts
         utils/                      # const.ts, helper.ts
-        components/                 # cards/ charts/ common/ forms/
+        components/                 # cards/ charts/ generic/ forms/
         hooks/                      # use-generate-response, use-response-filters
         pages/                      # experiment-details.tsx
 
@@ -99,10 +99,10 @@ A feature owns: `components/` `hooks/` `pages/` `utils/` (add `types/` for type-
 | `alerts/` | confirm/alert dialogs |
 | `buttons/` | bespoke buttons |
 | `charts/` | chart components |
-| `common/` | feature-internal shared pieces (lists, wrappers) |
+| `generic/` | pieces that fit **no** named kind (lists, wrappers) |
 | `layout/` | the feature's header/shell (`index.tsx` exports the layout) |
 
-Kinds are illustrative, not a closed list — a component that fits **no** named kind goes in `common/`. Shared `components/` uses the same kind-grouping (`blocks/` = empty/error state blocks, `banners/` = page banners, `account/` = account-menu widgets, `alerts/` = confirm dialogs).
+Kinds are illustrative, not a closed list — a component that fits **no** named kind goes in `generic/`. Shared `components/` uses the same kind-grouping (`blocks/` = empty/error state blocks, `banners/` = page banners, `account/` = account-menu widgets, `alerts/` = confirm dialogs, `layout/` = app shell), and its own unclassifiable primitives (e.g. a `loader`) go in shared `components/generic/`.
 
 **State stores are hooks.** A zustand store lives in `hooks/` as `use-<name>-filters.ts` (e.g. `use-experiment-filters`) — there is no separate `stores/` dir. Its default values live beside it in `utils/const.ts`. `providers/` is for React **context** providers only, not zustand.
 
@@ -142,7 +142,7 @@ start module-scoped  →  a sibling needs it?  →  hoist to nearest common pare
 
 | From → to | Style | Example |
 |---|---|---|
-| Module-internal | **relative** | `import { ExperimentList } from "../components/common/experiment-list"` |
+| Module-internal | **relative** | `import { ExperimentList } from "../components/generic/experiment-list"` |
 | Up one level inside module | relative | `import { useCreateExperiment } from "../../hooks/use-create-experiment"` |
 | Route file → module page | **`@/` alias** | `import { Experiment } from "@/modules/experiment/pages/experiment"` |
 | Shared scope | **`@/` alias** | `import { EmptyBlock } from "@/components/blocks/empty-block"` |
