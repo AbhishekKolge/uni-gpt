@@ -11,7 +11,7 @@ description: Ship EVERY feature not yet on main — split into logically named b
 - Git status (uncommitted work): !`git status --short`
 - Working-tree diff: !`git diff HEAD`
 - Local branches: !`git branch --format='%(refname:short)'`
-- Branches with commits NOT on main: !`for b in $(git branch --format='%(refname:short)' | grep -v '^main$'); do n=$(git rev-list --count main..$b 2>/dev/null); [ "$n" -gt 0 ] 2>/dev/null && echo "$b ($n commits ahead): $(git log --oneline main..$b | head -5)"; done`
+- Branches with commits NOT on main: !`for b in $(git branch --format='%(refname:short)' | grep -v '^main$'); do n=$(git rev-list --count main..$b 2>/dev/null || echo 0); if [ "${n:-0}" -gt 0 ] 2>/dev/null; then echo "$b ($n commits ahead): $(git log --oneline main..$b | head -5)"; fi; done; true`
 - Commits on current branch not on main: !`git log --oneline main..HEAD 2>/dev/null || echo "(on main or no diff)"`
 
 ## Your task
