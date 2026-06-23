@@ -25,7 +25,7 @@ import z from "zod";
 import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
-import PasswordInput from "../password-input";
+import PasswordInput from "../generic/password-input";
 
 const signInSchema = z.object({
 	email: z.email("Invalid email address"),

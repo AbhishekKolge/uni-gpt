@@ -26,8 +26,8 @@ import z from "zod";
 import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
-import PasswordInput from "../password-input";
-import PasswordStrengthMeter from "../password-strength-meter";
+import PasswordInput from "../generic/password-input";
+import PasswordStrengthMeter from "../generic/password-strength-meter";
 
 const signUpSchema = z.object({
 	name: z.string().min(2, "Name must be at least 2 characters"),

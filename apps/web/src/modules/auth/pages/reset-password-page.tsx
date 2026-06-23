@@ -26,8 +26,8 @@ import { toast } from "sonner";
 import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
-import PasswordInput from "../components/password-input";
-import PasswordStrengthMeter from "../components/password-strength-meter";
+import PasswordInput from "../components/generic/password-input";
+import PasswordStrengthMeter from "../components/generic/password-strength-meter";
 
 const resetPasswordSchema = z.object({
 	password: z.string().min(8, "Password must be at least 8 characters"),
