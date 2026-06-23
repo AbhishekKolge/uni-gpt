@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { passwordSchema } from "@uni-gpt/auth/lib/password-schema";
 import { passesStrengthGate } from "@uni-gpt/auth/lib/password-strength";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
@@ -23,20 +22,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
 import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
+import { type SignUpValues, signUpSchema } from "../../utils/schema";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
 import PasswordInput from "../generic/password-input";
 import PasswordStrengthMeter from "../generic/password-strength-meter";
-
-const signUpSchema = z.object({
-	name: z.string().min(2, "Name must be at least 2 characters"),
-	email: z.email("Invalid email address"),
-	password: passwordSchema,
-});
-
-type SignUpValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm({
 	onSwitchToSignIn,

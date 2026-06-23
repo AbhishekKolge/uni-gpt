@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { authClient } from "@/lib/auth-client";
-import LoginPage from "@/modules/auth/pages/login-page";
+import { LoginPage } from "@/modules/auth/pages/login-page";
 
 export default async function Page() {
 	const session = await authClient.getSession({
