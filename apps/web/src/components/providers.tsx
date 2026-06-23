@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@uni-gpt/ui/components/sonner";
 
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/lib/trpc";
 
 import { ThemeProvider } from "./theme-provider";
 
