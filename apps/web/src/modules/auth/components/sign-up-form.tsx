@@ -5,10 +5,8 @@ import { Label } from "@uni-gpt/ui/components/label";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
-
+import Loader from "@/components/loader";
 import { authClient } from "@/lib/auth-client";
-
-import Loader from "./loader";
 
 export default function SignUpForm({
 	onSwitchToSignIn,

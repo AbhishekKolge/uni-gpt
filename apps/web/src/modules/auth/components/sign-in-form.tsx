@@ -6,10 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
-
+import Loader from "@/components/loader";
 import { authClient } from "@/lib/auth-client";
-
-import Loader from "./loader";
 import SocialAuthButtons from "./social-auth-buttons";
 
 export default function SignInForm({
