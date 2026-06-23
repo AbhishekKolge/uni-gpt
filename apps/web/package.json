@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@better-auth/passkey": "catalog:",
+    "@hookform/resolvers": "catalog:",
     "@polar-sh/better-auth": "catalog:",
-    "@tanstack/react-form": "^1.28.0",
     "@tanstack/react-query": "^5.90.12",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
@@ -28,6 +28,7 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
     "sonner": "catalog:",
     "superjson": "catalog:",
     "zod": "catalog:"
