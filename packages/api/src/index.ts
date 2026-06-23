@@ -1,8 +1,21 @@
 import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
 
 import type { Context } from "./context";
+import { handleErrorShapes } from "./error";
 
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create({
+	errorFormatter({ shape, error }) {
+		return {
+			...shape,
+			...handleErrorShapes({
+				shape,
+				cause: error.cause,
+			}),
+		};
+	},
+	transformer: superjson,
+});
 
 export const router = t.router;
 

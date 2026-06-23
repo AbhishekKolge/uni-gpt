@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@uni-gpt/ui/components/button";
 
 import { authClient } from "@/lib/auth-client";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@/services/trpc";
 
 export default function Dashboard({
 	customerState,

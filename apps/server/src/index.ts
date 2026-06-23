@@ -1,6 +1,6 @@
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { createContext } from "@uni-gpt/api/context";
-import { appRouter } from "@uni-gpt/api/routers/index";
+import { appRouter } from "@uni-gpt/api/router";
 import { auth } from "@uni-gpt/auth";
 import { env } from "@uni-gpt/env/server";
 import { toNodeHandler } from "better-auth/node";
@@ -10,6 +10,8 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+
+import { shutdown } from "./utils/process";
 
 const app = express();
 
@@ -44,3 +46,6 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
 app.listen(3000, () => {
 	console.log("Server is running on http://localhost:3000");
 });
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
