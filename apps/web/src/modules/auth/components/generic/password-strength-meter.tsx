@@ -2,6 +2,7 @@
 
 import {
 	MIN_PASSWORD_SCORE,
+	PASSWORD_MAX_LENGTH,
 	passesStrengthGate,
 } from "@uni-gpt/auth/lib/password-strength";
 import { cn } from "@uni-gpt/ui/lib/utils";
@@ -93,7 +94,11 @@ export default function PasswordStrengthMeter({
 			onScoreChange?.(0);
 			return;
 		}
-		const { score: s, feedback } = estimatorRef.current(value);
+		// Cap the input zxcvbn evaluates — it is super-linear, so an over-long
+		// paste must never run unbounded on the main thread.
+		const { score: s, feedback } = estimatorRef.current(
+			value.slice(0, PASSWORD_MAX_LENGTH)
+		);
 		setScore(s);
 		setWarning(feedback.warning ?? null);
 		onScoreChange?.(s);

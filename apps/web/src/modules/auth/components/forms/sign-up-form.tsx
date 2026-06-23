@@ -1,5 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { passesStrengthGate } from "@uni-gpt/auth/lib/password-strength";
+import {
+	PASSWORD_MAX_LENGTH,
+	PASSWORD_MIN_LENGTH,
+	passesStrengthGate,
+} from "@uni-gpt/auth/lib/password-strength";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
 	Card,
@@ -32,7 +36,16 @@ import PasswordStrengthMeter from "../generic/password-strength-meter";
 const signUpSchema = z.object({
 	name: z.string().min(2, "Name must be at least 2 characters"),
 	email: z.email("Invalid email address"),
-	password: z.string().min(8, "Password must be at least 8 characters"),
+	password: z
+		.string()
+		.min(
+			PASSWORD_MIN_LENGTH,
+			`Password must be at least ${PASSWORD_MIN_LENGTH} characters`
+		)
+		.max(
+			PASSWORD_MAX_LENGTH,
+			`Password must be at most ${PASSWORD_MAX_LENGTH} characters`
+		),
 });
 
 type SignUpValues = z.infer<typeof signUpSchema>;

@@ -1,5 +1,6 @@
 "use client";
 
+import { PASSWORD_MAX_LENGTH } from "@uni-gpt/auth/lib/password-strength";
 import { Input } from "@uni-gpt/ui/components/input";
 import { cn } from "@uni-gpt/ui/lib/utils";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -14,6 +15,7 @@ import { type ComponentProps, useState } from "react";
  */
 export default function PasswordInput({
 	className,
+	maxLength = PASSWORD_MAX_LENGTH,
 	...props
 }: ComponentProps<"input">) {
 	const [visible, setVisible] = useState(false);
@@ -22,6 +24,7 @@ export default function PasswordInput({
 		<div className="relative">
 			<Input
 				className={cn("pr-9", className)}
+				maxLength={maxLength}
 				type={visible ? "text" : "password"}
 				{...props}
 			/>
