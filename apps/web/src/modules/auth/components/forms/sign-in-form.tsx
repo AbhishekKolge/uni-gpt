@@ -2,16 +2,18 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@uni-gpt/ui/components/button";
 import { Input } from "@uni-gpt/ui/components/input";
 import { Label } from "@uni-gpt/ui/components/label";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
-import Loader from "@/components/loader";
+import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
+import SocialAuthButtons from "../buttons/social-auth-buttons";
 
-export default function SignUpForm({
-	onSwitchToSignIn,
+export default function SignInForm({
+	onSwitchToSignUp,
 }: {
-	onSwitchToSignIn: () => void;
+	onSwitchToSignUp: () => void;
 }) {
 	const router = useRouter();
 	const { isPending } = authClient.useSession();
@@ -20,21 +22,17 @@ export default function SignUpForm({
 		defaultValues: {
 			email: "",
 			password: "",
-			name: "",
 		},
 		onSubmit: async ({ value }) => {
-			await authClient.signUp.email(
+			await authClient.signIn.email(
 				{
 					email: value.email,
 					password: value.password,
-					name: value.name,
 				},
 				{
 					onSuccess: () => {
-						// requireEmailVerification is on — the user must verify before using
-						// the app, so hand off to the verify-email page (not the dashboard).
-						router.push("/verify-email");
-						toast.success("Account created. Check your email to verify.");
+						router.push("/dashboard");
+						toast.success("Sign in successful");
 					},
 					onError: (error) => {
 						toast.error(error.error.message || error.error.statusText);
@@ -44,7 +42,6 @@ export default function SignUpForm({
 		},
 		validators: {
 			onSubmit: z.object({
-				name: z.string().min(2, "Name must be at least 2 characters"),
 				email: z.email("Invalid email address"),
 				password: z.string().min(8, "Password must be at least 8 characters"),
 			}),
@@ -57,7 +54,7 @@ export default function SignUpForm({
 
 	return (
 		<div className="mx-auto mt-10 w-full max-w-md p-6">
-			<h1 className="mb-6 text-center font-bold text-3xl">Create Account</h1>
+			<h1 className="mb-6 text-center font-bold text-3xl">Welcome Back</h1>
 
 			<form
 				className="space-y-4"
@@ -67,28 +64,6 @@ export default function SignUpForm({
 					form.handleSubmit();
 				}}
 			>
-				<div>
-					<form.Field name="name">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Name</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p className="text-red-500" key={error?.message}>
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
 				<div>
 					<form.Field name="email">
 						{(field) => (
@@ -147,19 +122,36 @@ export default function SignUpForm({
 							disabled={!canSubmit || isSubmitting}
 							type="submit"
 						>
-							{isSubmitting ? "Submitting..." : "Sign Up"}
+							{isSubmitting ? "Submitting..." : "Sign In"}
 						</Button>
 					)}
 				</form.Subscribe>
 			</form>
 
+			<div className="mt-4 text-right text-sm">
+				<Link
+					className="text-indigo-600 hover:text-indigo-800"
+					href="/forgot-password"
+				>
+					Forgot password?
+				</Link>
+			</div>
+
+			<div className="my-4 flex items-center gap-2 text-muted-foreground text-xs">
+				<span className="h-px flex-1 bg-border" />
+				OR
+				<span className="h-px flex-1 bg-border" />
+			</div>
+
+			<SocialAuthButtons />
+
 			<div className="mt-4 text-center">
 				<Button
 					className="text-indigo-600 hover:text-indigo-800"
-					onClick={onSwitchToSignIn}
+					onClick={onSwitchToSignUp}
 					variant="link"
 				>
-					Already have an account? Sign In
+					Need an account? Sign Up
 				</Button>
 			</div>
 		</div>
