@@ -1,6 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@uni-gpt/ui/components/card";
+import {
 	Form,
 	FormControl,
 	FormField,
@@ -9,6 +16,7 @@ import {
 	FormMessage,
 } from "@uni-gpt/ui/components/form";
 import { Input } from "@uni-gpt/ui/components/input";
+import { Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -17,6 +25,7 @@ import z from "zod";
 import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
+import PasswordInput from "../password-input";
 
 const signInSchema = z.object({
 	email: z.email("Invalid email address"),
@@ -63,72 +72,94 @@ export default function SignInForm({
 		return <Loader />;
 	}
 
+	const isSubmitting = form.formState.isSubmitting;
+
 	return (
-		<div className="mx-auto mt-10 w-full max-w-md p-6">
-			<h1 className="mb-6 text-center font-bold text-3xl">Welcome Back</h1>
+		<div className="mx-auto w-full max-w-md px-4 py-12">
+			<Card>
+				<CardHeader className="text-center">
+					<CardTitle className="text-2xl">Welcome back</CardTitle>
+					<CardDescription>Sign in to continue to uni-gpt.</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<Form {...form}>
+						<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+							<FormField
+								control={form.control}
+								name="email"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Email</FormLabel>
+										<FormControl
+											render={
+												<Input autoComplete="email" type="email" {...field} />
+											}
+										/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-			<Form {...form}>
-				<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-					<FormField
-						control={form.control}
-						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Email</FormLabel>
-								<FormControl render={<Input type="email" {...field} />} />
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+							<FormField
+								control={form.control}
+								name="password"
+								render={({ field }) => (
+									<FormItem>
+										<div className="flex items-center justify-between">
+											<FormLabel>Password</FormLabel>
+											<Link
+												className="text-muted-foreground text-sm underline-offset-4 transition-colors hover:text-foreground hover:underline"
+												href="/forgot-password"
+											>
+												Forgot password?
+											</Link>
+										</div>
+										<FormControl
+											render={
+												<PasswordInput
+													autoComplete="current-password"
+													{...field}
+												/>
+											}
+										/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-					<FormField
-						control={form.control}
-						name="password"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Password</FormLabel>
-								<FormControl render={<Input type="password" {...field} />} />
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+							<Button className="w-full" disabled={isSubmitting} type="submit">
+								{isSubmitting ? (
+									<>
+										<Loader2Icon className="size-4 animate-spin" />
+										Signing in…
+									</>
+								) : (
+									"Sign in"
+								)}
+							</Button>
+						</form>
+					</Form>
 
-					<Button
-						className="w-full"
-						disabled={form.formState.isSubmitting}
-						type="submit"
-					>
-						{form.formState.isSubmitting ? "Submitting..." : "Sign In"}
-					</Button>
-				</form>
-			</Form>
+					<div className="flex items-center gap-2 text-muted-foreground text-xs">
+						<span className="h-px flex-1 bg-border" />
+						OR
+						<span className="h-px flex-1 bg-border" />
+					</div>
 
-			<div className="mt-4 text-right text-sm">
-				<Link
-					className="text-indigo-600 hover:text-indigo-800"
-					href="/forgot-password"
-				>
-					Forgot password?
-				</Link>
-			</div>
+					<SocialAuthButtons />
 
-			<div className="my-4 flex items-center gap-2 text-muted-foreground text-xs">
-				<span className="h-px flex-1 bg-border" />
-				OR
-				<span className="h-px flex-1 bg-border" />
-			</div>
-
-			<SocialAuthButtons />
-
-			<div className="mt-4 text-center">
-				<Button
-					className="text-indigo-600 hover:text-indigo-800"
-					onClick={onSwitchToSignUp}
-					variant="link"
-				>
-					Need an account? Sign Up
-				</Button>
-			</div>
+					<p className="text-center text-muted-foreground text-sm">
+						Need an account?{" "}
+						<Button
+							className="h-auto p-0"
+							onClick={onSwitchToSignUp}
+							variant="link"
+						>
+							Sign up
+						</Button>
+					</p>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
