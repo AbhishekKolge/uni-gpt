@@ -82,7 +82,7 @@ export function SecurityPage() {
 			{
 				onSuccess: () => {
 					toast.success("Account deleted");
-					router.push("/");
+					router.push("/login");
 				},
 				onError: (error) => {
 					toast.error(error.error.message || error.error.statusText);
