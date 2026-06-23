@@ -21,7 +21,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
 import { type SignInValues, signInSchema } from "../../utils/schema";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
@@ -33,7 +32,6 @@ export default function SignInForm({
 	onSwitchToSignUp: () => void;
 }) {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
 
 	const form = useForm<SignInValues>({
 		resolver: zodResolver(signInSchema),
@@ -60,10 +58,6 @@ export default function SignInForm({
 			}
 		);
 	};
-
-	if (isPending) {
-		return <Loader />;
-	}
 
 	const isSubmitting = form.formState.isSubmitting;
 

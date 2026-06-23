@@ -22,7 +22,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import Loader from "@/components/generic/loader";
 import { authClient } from "@/lib/auth-client";
 import { type SignUpValues, signUpSchema } from "../../utils/schema";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
@@ -35,7 +34,6 @@ export default function SignUpForm({
 	onSwitchToSignIn: () => void;
 }) {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
 	const [pwScore, setPwScore] = useState(0);
 
 	const form = useForm<SignUpValues>({
@@ -75,10 +73,6 @@ export default function SignUpForm({
 			}
 		);
 	};
-
-	if (isPending) {
-		return <Loader />;
-	}
 
 	const isSubmitting = form.formState.isSubmitting;
 
