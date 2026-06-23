@@ -55,9 +55,9 @@ Any one fails → do not install. Find a vetted alternative, an older known-good
 
 ## Installing, once vetted
 
-- **pnpm only, from repo root**, scoped to a workspace: `pnpm -F web add <pkg>@<version>` (never `cd` + `npm i`).
-- **Shared external dep** → add the version to `catalog:` in `pnpm-workspace.yaml`, reference as `"<pkg>": "catalog:"`. A single-app web-only dep can be a direct dependency. See [[monorepo-conventions]].
-- **`@mastra/*` → pin EXACT, no `^`/`~`.** Use `@mastra/core@1.43.0`. **NEVER `1.42.1`** (compromised 2026-06-17 via `easy-day-js` postinstall dropper).
+- **ALWAYS use the catalog — every external dep, no exceptions.** First add the vetted version to `catalog:` in `pnpm-workspace.yaml`, then reference it as `"<pkg>": "catalog:"` in every consuming `package.json`. **Never write a literal version range (`^x.y.z`, `~x.y.z`, or a bare pin) in a package's `package.json`** — the catalog is the single source of truth so a dep used by two packages can never drift. This holds even for a dep only one package uses today (the next package to need it must reuse the same version).
+- **pnpm only, from repo root**, scoped to a workspace. Two-step: add the version to the catalog, then `pnpm -F <pkg-name> add <dep>@catalog:` (never `cd` + `npm i`, never `pnpm add <dep>@^x` which writes a literal range). See [[monorepo-conventions]].
+- **`@mastra/*` → pin EXACT in the catalog, no `^`/`~`.** Use `@mastra/core@1.43.0`. **NEVER `1.42.1`** (compromised 2026-06-17 via `easy-day-js` postinstall dropper).
 
 ## Post-install verification (every time)
 
@@ -88,3 +88,4 @@ If it prints anything but `0`: STOP, remove the dep, investigate — a known dro
 - Maintainer changed right before the version you want.
 - Any web result mentioning malware / compromise / typosquat for the name or version.
 - You're about to type `1.42.1` for any `@mastra/*` package.
+- A literal version range (`^x.y.z`) about to land in a `package.json` instead of `catalog:` — STOP, move the version to the catalog first.
