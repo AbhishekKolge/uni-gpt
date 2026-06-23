@@ -33,7 +33,9 @@ export default function Brand({
 }
 
 /** A header-row wrapper used above auth cards: Brand on the left, actions right. */
-export function BrandHeader({ children }: { children?: React.ReactNode }) {
+export function BrandHeader({
+	children,
+}: Readonly<{ children?: React.ReactNode }>) {
 	return (
 		<header className="flex items-center justify-between px-4 py-3 sm:px-6">
 			<Brand />

@@ -34,8 +34,11 @@ function GoogleIcon() {
 export default function SocialAuthButtons() {
 	const [passkeyLoading, setPasskeyLoading] = useState(false);
 
-	const google = () => {
-		authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" });
+	const google = async () => {
+		await authClient.signIn.social({
+			provider: "google",
+			callbackURL: "/dashboard",
+		});
 	};
 
 	const passkey = async () => {

@@ -1,11 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	PASSWORD_MAX_LENGTH,
-	PASSWORD_MIN_LENGTH,
-	passesStrengthGate,
-} from "@uni-gpt/auth/lib/password-strength";
+import { passwordSchema } from "@uni-gpt/auth/lib/password-schema";
+import { passesStrengthGate } from "@uni-gpt/auth/lib/password-strength";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
 	Card,
@@ -34,16 +31,7 @@ import PasswordInput from "../components/generic/password-input";
 import PasswordStrengthMeter from "../components/generic/password-strength-meter";
 
 const resetPasswordSchema = z.object({
-	password: z
-		.string()
-		.min(
-			PASSWORD_MIN_LENGTH,
-			`Password must be at least ${PASSWORD_MIN_LENGTH} characters`
-		)
-		.max(
-			PASSWORD_MAX_LENGTH,
-			`Password must be at most ${PASSWORD_MAX_LENGTH} characters`
-		),
+	password: passwordSchema,
 });
 
 type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;

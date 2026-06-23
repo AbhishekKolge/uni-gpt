@@ -38,7 +38,7 @@ async function loadEstimator(): Promise<Estimator> {
 	};
 }
 
-const LABELS = ["Very weak", "Weak", "Fair", "Good", "Strong"];
+const LABELS = ["Very weak", "Weak", "Fair", "Good", "Strong"] as const;
 
 function barColor(score: number): string {
 	if (score >= 3) {
