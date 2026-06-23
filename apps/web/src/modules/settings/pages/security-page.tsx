@@ -15,14 +15,14 @@ import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
 
-interface Passkey {
-	id: string;
-	name?: string | null;
-}
-interface Session {
-	token: string;
-	userAgent?: string | null;
-}
+// Derive the element types from the better-auth client so they track the API
+// instead of being hand-maintained shapes that need a cast.
+type Passkey = NonNullable<
+	Awaited<ReturnType<typeof authClient.passkey.listUserPasskeys>>["data"]
+>[number];
+type Session = NonNullable<
+	Awaited<ReturnType<typeof authClient.listSessions>>["data"]
+>[number];
 
 export function SecurityPage() {
 	const router = useRouter();
@@ -33,12 +33,12 @@ export function SecurityPage() {
 
 	const loadPasskeys = useCallback(async () => {
 		const { data } = await authClient.passkey.listUserPasskeys();
-		setPasskeys((data ?? []) as Passkey[]);
+		setPasskeys(data ?? []);
 	}, []);
 
 	const loadSessions = useCallback(async () => {
 		const { data } = await authClient.listSessions();
-		setSessions((data ?? []) as Session[]);
+		setSessions(data ?? []);
 	}, []);
 
 	useEffect(() => {

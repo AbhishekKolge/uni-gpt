@@ -34,3 +34,7 @@ catalog:
   tailwindcss: ^4.1.18
   "@prisma/client": ^7.8.0
   superjson: ^2.2.2
+  vitest: ^3.2.4
+  "@zxcvbn-ts/core": 4.1.2
+  "@zxcvbn-ts/language-common": 4.1.2
+  "@zxcvbn-ts/language-en": 4.1.1

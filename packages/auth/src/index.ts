@@ -10,6 +10,10 @@ import {
 	sendResetPasswordEmail,
 	sendVerificationEmail,
 } from "./lib/email";
+import {
+	PASSWORD_MAX_LENGTH,
+	PASSWORD_MIN_LENGTH,
+} from "./lib/password-strength";
 import { polarClient } from "./lib/payments";
 
 export function createAuth() {
@@ -25,6 +29,9 @@ export function createAuth() {
 		emailAndPassword: {
 			enabled: true,
 			requireEmailVerification: true,
+			// DoS guard: reject over-long passwords at the route, before hashing.
+			minPasswordLength: PASSWORD_MIN_LENGTH,
+			maxPasswordLength: PASSWORD_MAX_LENGTH,
 			resetPasswordTokenExpiresIn: 3600, // 1 hour
 			// biome-ignore lint/suspicious/useAwait: helpers are fire-and-forget; the callback must return Promise<void>.
 			sendResetPassword: async ({ user, url }) => {

@@ -10,7 +10,8 @@
     }
   },
   "scripts": {
-    "check-types": "tsc -b"
+    "check-types": "tsc -b",
+    "test": "vitest run"
   },
   "dependencies": {
     "@better-auth/passkey": "catalog:",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@uni-gpt/config": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

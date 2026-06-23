@@ -1,88 +1,92 @@
 ---
 name: web-forms
-description: Use when building a data form in apps/web — collecting input, validating it, wiring fields, handling arrays/tags, or submitting to a mutation. Read it before writing a form so it uses react-hook-form + zodResolver against the shared schema, the ui Field components, and the module mutation hook.
+description: Use when building a data form in apps/web — collecting input, validating it, wiring fields, handling arrays/tags, or submitting to a mutation or authClient. Read it before writing a form so it uses react-hook-form + zodResolver against a shared schema, the @uni-gpt/ui Form components, and the right submit path. One form pattern everywhere.
 ---
 
 # Web forms (react-hook-form + zod)
 
-Data forms use **react-hook-form** + `zodResolver` against the **shared zod schema** (the same one the api validates with), the `@uni-gpt/ui` `Field` components, and a module mutation hook for submit. One form pattern everywhere. Forms live at `modules/<x>/components/forms/<name>-form.tsx` → [[web-folder-structure]].
+**Every** form in `apps/web` — data forms AND auth forms — uses **react-hook-form** + `zodResolver`. The project moved OFF `@tanstack/react-form` (it is not installed). Forms validate against a **shared zod schema** (the same rules the server validates with), render with the `@uni-gpt/ui` `Form*` primitives, and submit via either a **module mutation hook** (data) or **`authClient`** (auth). Forms live at `modules/<x>/components/forms/<name>-form.tsx` → [[web-folder-structure]].
 
-> **Migrate-from:** uni-gpt's **auth** forms use `@tanstack/react-form` + `authClient` directly (sign-in/up/reset are not data mutations → keep those on `authClient`). **Data forms** target react-hook-form below; add `react-hook-form` + `@hookform/resolvers` to the catalog ([[monorepo-conventions]]) when you write the first one.
+## The form primitives — `@uni-gpt/ui/components/form`
 
-## The shape
+The ui package wraps react-hook-form's `Controller` with base-ui's `useRender`. Use these (NOT a `Field`/`FieldLabel` component — that doesn't exist):
+`Form` (= `FormProvider`), `FormField` (= `Controller`), `FormItem`, `FormLabel`, `FormControl`, `FormMessage`, `FormDescription`.
+
+`FormControl` takes a **`render` prop** (base-ui), into which you pass the input element with `{...field}` spread — `FormControl` injects `id` / `aria-describedby` / `aria-invalid` onto it for label + error wiring:
 
 ```tsx
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
 import { Button } from "@uni-gpt/ui/components/button";
-import { Field, FieldLabel, FieldError } from "@uni-gpt/ui/components/field";
+import {
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+} from "@uni-gpt/ui/components/form";
 import { Input } from "@uni-gpt/ui/components/input";
-import { LoadingSwap } from "@uni-gpt/ui/components/loading-swap";
-import { createChatSchema, type CreateChatDto } from "@uni-gpt/utils/chat/schema";
-import { useCreateChat } from "../../hooks/use-create-chat";
+import { Loader2Icon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import z from "zod";
 
-export const CreateChatForm = ({ close }: { close: () => void }) => {
-  const form = useForm<CreateChatDto>({
-    resolver: zodResolver(createChatSchema),
+const schema = z.object({ title: z.string().min(1, "Required") });
+type Values = z.infer<typeof schema>;
+
+export default function CreateThingForm() {
+  const form = useForm<Values>({
+    resolver: zodResolver(schema),
     defaultValues: { title: "" },
   });
-  const createChat = useCreateChat({ onSuccess: () => { close(); form.reset(); } });
 
-  const onSubmit = (data: CreateChatDto) => createChat.mutate(data);
+  const onSubmit = (data: Values) => { /* mutation hook OR authClient */ };
+  const isSubmitting = form.formState.isSubmitting;
 
   return (
-    <>
-      <form id="create-chat-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <Controller
+    <Form {...form}>
+      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
           control={form.control}
           name="title"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="title">Title</FieldLabel>
-              <Input {...field} id="title" aria-invalid={fieldState.invalid} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl render={<Input {...field} />} />
+              <FormMessage />
+            </FormItem>
           )}
         />
+        <Button className="w-full" disabled={isSubmitting} type="submit">
+          {isSubmitting ? <><Loader2Icon className="size-4 animate-spin" /> Saving…</> : "Save"}
+        </Button>
       </form>
-      <Button form="create-chat-form" type="submit" disabled={createChat.isPending}>
-        <LoadingSwap isLoading={createChat.isPending}>Create</LoadingSwap>
-      </Button>
-    </>
+    </Form>
   );
-};
+}
 ```
 
 ## The conventions
 
-- **Resolver against the shared schema.** `zodResolver(createChatSchema)` — the schema lives in `@uni-gpt/utils/<x>/schema` ([[shared-utils-structure]]), so the same rules validate on the server. Never redefine the schema in the component.
-- **`Controller` per field.** Each field is a `Controller` rendering a ui `Field` with `data-invalid={fieldState.invalid}`, the input spread with `{...field}` + `aria-invalid`, and a `FieldError` shown only when invalid. `Field`/`FieldLabel`/`FieldError`/`FieldDescription` come from `@uni-gpt/ui` ([[ui-component-structure]]).
-- **Submit = a mutation hook.** `onSubmit` calls the module's `useCreateX().mutate(data)` ([[web-data-fetching]]). The component passes `onSuccess` (close dialog, `form.reset()`); errors toast globally.
-- **External submit button.** Give the `<form>` an `id` and put the submit `<Button form="<id>" type="submit">` outside it (e.g. in a dialog footer). Wrap the label in `<LoadingSwap isLoading={mutation.isPending}>` and disable while pending.
+- **Resolver against a shared schema — never re-declare it in the component.** The schema is the single source of truth so client + server validate identically. Put a schema both api + web need in the shared package per [[shared-utils-structure]] (today `@uni-gpt/utils` may not exist yet; until it does, a domain-owned package is the home — e.g. `passwordSchema` lives in `@uni-gpt/auth/lib/password-schema` and the sign-up/sign-in/reset forms all import it). Derive the form's value type with `z.infer<typeof schema>`.
+- **`FormField` per field**, rendering a `FormItem` → `FormLabel` + `FormControl render={<Input {...field} />}` + `FormMessage`. `FormMessage` shows the field error automatically (no manual error text). For a custom input (e.g. a password field with a show/hide toggle) pass it to `render`: `render={<PasswordInput {...field} />}` — it must spread the injected props onto the real `<input>`.
+- **Submit path depends on the form kind.**
+  - **Data form** → a module mutation hook (`useCreateX().mutate(data)`, [[web-data-fetching]]); pass `onSuccess` to close/reset; mutation errors toast globally.
+  - **Auth form** (sign-in/up/reset/forgot) → call **`authClient`** directly (`authClient.signUp.email(...)`, `authClient.requestPasswordReset(...)`), with `onSuccess`/`onError` toasts. Auth is not a tRPC mutation. → [[auth-setup]].
+- **Loading feedback on submit.** Disable the submit button with `form.formState.isSubmitting` and show a spinner (`Loader2Icon animate-spin`) — never a dead button.
+- **Async-import heavy validators** (e.g. a zxcvbn password meter) so they don't bloat the initial bundle; gate submit on a pure helper, not the heavy lib.
 
 ## Array / tag fields — `useFieldArray`
 
-For a repeating field (tags, list items) whose UI shape differs from the wire shape, **extend the shared schema** for the form and map back on submit:
+For a repeating field (tags, list items) whose UI shape differs from the wire shape, **extend the shared schema** for the form and map back on submit; keep the wire schema canonical and the `.extend()` for UI-only shapes beside the form in the module's `utils/schema.ts`:
 
 ```tsx
-// utils/schema.ts (web module) — UI-only shape: tags as objects for useFieldArray
-export const extendedCreateChatSchema = createChatSchema.extend({
-  tags: z.array(z.object({ name: chatTagSchema })).optional(),
+const formSchema = createThingSchema.extend({
+  tags: z.array(z.object({ name: z.string().min(1) })).optional(),
 });
-```
-
-```tsx
 const { fields, append, remove } = useFieldArray({ control: form.control, name: "tags" });
-const onSubmit = (data: ExtendedCreateChatDto) =>
-  createChat.mutate({ ...data, tags: data.tags?.map((t) => t.name) ?? [] });
+const onSubmit = (data: z.infer<typeof formSchema>) =>
+  createThing.mutate({ ...data, tags: data.tags?.map((t) => t.name) ?? [] });
 ```
-
-Keep the wire schema (`createChatSchema`) canonical in `@uni-gpt/utils`; the `.extend()` for UI-only shapes lives beside the form in the module's `utils/schema.ts`.
 
 ## Common mistakes
 
-- **Re-declaring the schema** in the component instead of importing the shared one — server/client validation drift.
-- **An inner submit button** instead of `form="<id>"` + external button — breaks dialog/sheet footers.
-- **Per-field error toasts** — show inline `FieldError`; mutation errors toast globally.
-- **Routing an auth form through react-hook-form + a mutation** — auth stays on `@tanstack/react-form` + `authClient` ([[auth-setup]]).
-- **No `aria-invalid` / `FieldError`** — accessibility + Ultracite will flag it.
+- **Re-declaring the schema** in the component instead of importing the shared one → server/client validation drift.
+- **Reaching for `@tanstack/react-form`** — it is not installed; the project standard is react-hook-form. (Older skill text said auth stays on tanstack — that is no longer true.)
+- **Manual error rendering** instead of `<FormMessage />`, or a missing `FormLabel` (placeholder-only) — accessibility + Ultracite will flag it.
+- **A dead submit button** with no `isSubmitting` disable/spinner.
+- **Spreading `{...field}` onto a wrapper that doesn't forward it to the real `<input>`** — breaks `id`/`aria-invalid` association.

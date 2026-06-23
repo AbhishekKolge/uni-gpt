@@ -3,6 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@uni-gpt/ui/components/card";
+import {
 	Form,
 	FormControl,
 	FormField,
@@ -11,6 +18,7 @@ import {
 	FormMessage,
 } from "@uni-gpt/ui/components/form";
 import { Input } from "@uni-gpt/ui/components/input";
+import { ArrowLeftIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -44,36 +52,56 @@ export default function ForgotPasswordPage() {
 		);
 	};
 
+	const isSubmitting = form.formState.isSubmitting;
+
 	return (
-		<div className="mx-auto mt-10 w-full max-w-md p-6">
-			<h1 className="mb-6 text-center font-bold text-3xl">Forgot password</h1>
-			<Form {...form}>
-				<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-					<FormField
-						control={form.control}
-						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Email</FormLabel>
-								<FormControl render={<Input type="email" {...field} />} />
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button
-						className="w-full"
-						disabled={form.formState.isSubmitting}
-						type="submit"
+		<div className="mx-auto w-full max-w-md px-4 py-12">
+			<Card>
+				<CardHeader className="text-center">
+					<CardTitle className="text-2xl">Forgot password?</CardTitle>
+					<CardDescription>
+						Enter your email and we&apos;ll send you a reset link.
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<Form {...form}>
+						<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+							<FormField
+								control={form.control}
+								name="email"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Email</FormLabel>
+										<FormControl
+											render={
+												<Input autoComplete="email" type="email" {...field} />
+											}
+										/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<Button className="w-full" disabled={isSubmitting} type="submit">
+								{isSubmitting ? (
+									<>
+										<Loader2Icon className="size-4 animate-spin" />
+										Sending…
+									</>
+								) : (
+									"Send reset link"
+								)}
+							</Button>
+						</form>
+					</Form>
+					<Link
+						className="flex items-center justify-center gap-1 text-muted-foreground text-sm transition-colors hover:text-foreground"
+						href="/login"
 					>
-						{form.formState.isSubmitting ? "Sending..." : "Send reset link"}
-					</Button>
-				</form>
-			</Form>
-			<p className="mt-4 text-center text-sm">
-				<Link className="text-indigo-600 hover:text-indigo-800" href="/login">
-					Back to sign in
-				</Link>
-			</p>
+						<ArrowLeftIcon className="size-4" />
+						Back to sign in
+					</Link>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
