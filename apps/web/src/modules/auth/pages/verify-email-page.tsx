@@ -15,7 +15,7 @@ import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
 
-export default function VerifyEmailPage() {
+export function VerifyEmailPage() {
 	const { data: session } = authClient.useSession();
 	const [resending, setResending] = useState(false);
 
