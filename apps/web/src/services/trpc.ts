@@ -1,34 +1,34 @@
-import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
+import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@uni-gpt/api/routers/index";
+import type { AppRouter } from "@uni-gpt/api/router";
 import { toast } from "sonner";
+import superjson from "superjson";
 
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
-		onError: (error, query) => {
+		onError: (error) => {
 			toast.error(error.message, {
 				action: {
 					label: "retry",
 					onClick: () => {
-						query.invalidate();
+						queryClient.invalidateQueries();
 					},
 				},
 			});
 		},
 	}),
-	mutationCache: new MutationCache({
-		onError: (error) => {
-			toast.error(
-				error instanceof Error ? error.message : "Something went wrong"
-			);
+	defaultOptions: {
+		queries: {
+			retry: 0,
 		},
-	}),
+	},
 });
 
 const trpcClient = createTRPCClient<AppRouter>({
 	links: [
 		httpBatchLink({
+			// Same-origin: a Next rewrite proxies /trpc to the server (CLAUDE.md).
 			url: "/trpc",
 			fetch(url, options) {
 				return fetch(url, {
@@ -36,6 +36,7 @@ const trpcClient = createTRPCClient<AppRouter>({
 					credentials: "include",
 				});
 			},
+			transformer: superjson,
 		}),
 	],
 });

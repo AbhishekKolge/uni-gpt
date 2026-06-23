@@ -3,7 +3,7 @@ import { Outfit } from "next/font/google";
 
 import "../index.css";
 import Header from "@/components/header";
-import Providers from "@/components/providers";
+import Providers from "@/providers";
 
 const fontSans = Outfit({
 	subsets: ["latin"],
