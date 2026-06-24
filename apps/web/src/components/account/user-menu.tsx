@@ -9,6 +9,7 @@ import {
 	DropdownMenuTrigger,
 } from "@uni-gpt/ui/components/dropdown-menu";
 import { Skeleton } from "@uni-gpt/ui/components/skeleton";
+import { ChevronDownIcon, ShieldIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -19,7 +20,7 @@ export default function UserMenu() {
 	const { data: session, isPending } = authClient.useSession();
 
 	if (isPending) {
-		return <Skeleton className="h-9 w-24" />;
+		return <Skeleton className="h-9 w-28" />;
 	}
 
 	if (!session) {
@@ -30,31 +31,50 @@ export default function UserMenu() {
 		);
 	}
 
+	const initial = session.user.name?.charAt(0).toUpperCase() ?? "?";
+
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button variant="outline" />}>
-				{session.user.name}
+			<DropdownMenuTrigger
+				render={<Button className="gap-2" variant="outline" />}
+			>
+				<span className="flex size-5 items-center justify-center rounded-full bg-primary/10 font-medium text-[0.7rem] text-primary">
+					{initial}
+				</span>
+				<span className="max-w-32 truncate">{session.user.name}</span>
+				<ChevronDownIcon className="size-4 text-muted-foreground" />
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="bg-card">
+			<DropdownMenuContent align="end" className="w-56 bg-card">
+				<DropdownMenuLabel className="flex flex-col gap-0.5">
+					<span className="font-medium text-foreground text-sm">
+						{session.user.name}
+					</span>
+					<span className="truncate font-normal text-muted-foreground text-xs">
+						{session.user.email}
+					</span>
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuLabel>My Account</DropdownMenuLabel>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem>{session.user.email}</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={() => {
-							authClient.signOut({
-								fetchOptions: {
-									onSuccess: () => {
-										router.push("/login");
-									},
-								},
-							});
-						}}
-						variant="destructive"
-					>
-						Sign Out
+					<DropdownMenuItem render={<Link href="/settings/security" />}>
+						<ShieldIcon />
+						Security
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					onClick={() => {
+						authClient.signOut({
+							fetchOptions: {
+								onSuccess: () => {
+									router.push("/login");
+								},
+							},
+						});
+					}}
+					variant="destructive"
+				>
+					Sign Out
+				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

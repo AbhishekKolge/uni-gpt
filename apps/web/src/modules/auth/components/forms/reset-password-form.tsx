@@ -4,13 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { passesStrengthGate } from "@uni-gpt/auth/lib/password-strength";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@uni-gpt/ui/components/card";
-import {
 	Form,
 	FormControl,
 	FormField,
@@ -29,6 +22,7 @@ import {
 	type ResetPasswordValues,
 	resetPasswordSchema,
 } from "../../utils/schema";
+import AuthShell from "../generic/auth-shell";
 import PasswordInput from "../generic/password-input";
 import PasswordStrengthMeter from "../generic/password-strength-meter";
 
@@ -70,50 +64,43 @@ export default function ResetPasswordForm() {
 	const isSubmitting = form.formState.isSubmitting;
 
 	return (
-		<div className="mx-auto w-full max-w-md px-4 py-12">
-			<Card>
-				<CardHeader className="text-center">
-					<CardTitle className="text-2xl">Reset password</CardTitle>
-					<CardDescription>
-						Choose a new password for your account.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<Form {...form}>
-						<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>New password</FormLabel>
-										<FormControl
-											render={
-												<PasswordInput autoComplete="new-password" {...field} />
-											}
-										/>
-										<PasswordStrengthMeter
-											onScoreChange={setPwScore}
-											value={password ?? ""}
-										/>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button className="w-full" disabled={isSubmitting} type="submit">
-								{isSubmitting ? (
-									<>
-										<Loader2Icon className="size-4 animate-spin" />
-										Resetting…
-									</>
-								) : (
-									"Reset password"
-								)}
-							</Button>
-						</form>
-					</Form>
-				</CardContent>
-			</Card>
-		</div>
+		<AuthShell
+			description="Choose a new password for your account."
+			title="Reset password"
+		>
+			<Form {...form}>
+				<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+					<FormField
+						control={form.control}
+						name="password"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>New password</FormLabel>
+								<FormControl
+									render={
+										<PasswordInput autoComplete="new-password" {...field} />
+									}
+								/>
+								<PasswordStrengthMeter
+									onScoreChange={setPwScore}
+									value={password ?? ""}
+								/>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<Button className="w-full" disabled={isSubmitting} type="submit">
+						{isSubmitting ? (
+							<>
+								<Loader2Icon className="size-4 animate-spin" />
+								Resetting…
+							</>
+						) : (
+							"Reset password"
+						)}
+					</Button>
+				</form>
+			</Form>
+		</AuthShell>
 	);
 }
