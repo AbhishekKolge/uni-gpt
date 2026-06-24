@@ -2,13 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { passesStrengthGate } from "@uni-gpt/auth/lib/password-strength";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@uni-gpt/ui/components/card";
-import {
 	Form,
 	FormControl,
 	FormField,
@@ -25,6 +18,7 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { type SignUpValues, signUpSchema } from "../../utils/schema";
 import SocialAuthButtons from "../buttons/social-auth-buttons";
+import AuthShell from "../generic/auth-shell";
 import PasswordInput from "../generic/password-input";
 import PasswordStrengthMeter from "../generic/password-strength-meter";
 
@@ -77,100 +71,93 @@ export default function SignUpForm({
 	const isSubmitting = form.formState.isSubmitting;
 
 	return (
-		<div className="mx-auto w-full max-w-md px-4 py-12">
-			<Card>
-				<CardHeader className="text-center">
-					<CardTitle className="text-2xl">Create your account</CardTitle>
-					<CardDescription>
-						Start chatting in seconds — free credits on sign-up.
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					<Form {...form}>
-						<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-							<FormField
-								control={form.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Name</FormLabel>
-										<FormControl
-											render={<Input autoComplete="name" {...field} />}
-										/>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+		<AuthShell
+			description="Start chatting in seconds — free credits on sign-up."
+			title="Create your account"
+		>
+			<Form {...form}>
+				<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Name</FormLabel>
+								<FormControl
+									render={<Input autoComplete="name" {...field} />}
+								/>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Email</FormLabel>
-										<FormControl
-											render={
-												<Input autoComplete="email" type="email" {...field} />
-											}
-										/>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+					<FormField
+						control={form.control}
+						name="email"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Email</FormLabel>
+								<FormControl
+									render={
+										<Input autoComplete="email" type="email" {...field} />
+									}
+								/>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Password</FormLabel>
-										<FormControl
-											render={
-												<PasswordInput autoComplete="new-password" {...field} />
-											}
-										/>
-										<PasswordStrengthMeter
-											onScoreChange={setPwScore}
-											value={password ?? ""}
-										/>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+					<FormField
+						control={form.control}
+						name="password"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Password</FormLabel>
+								<FormControl
+									render={
+										<PasswordInput autoComplete="new-password" {...field} />
+									}
+								/>
+								<PasswordStrengthMeter
+									onScoreChange={setPwScore}
+									value={password ?? ""}
+								/>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-							<Button className="w-full" disabled={isSubmitting} type="submit">
-								{isSubmitting ? (
-									<>
-										<Loader2Icon className="size-4 animate-spin" />
-										Creating account…
-									</>
-								) : (
-									"Create account"
-								)}
-							</Button>
-						</form>
-					</Form>
+					<Button className="w-full" disabled={isSubmitting} type="submit">
+						{isSubmitting ? (
+							<>
+								<Loader2Icon className="size-4 animate-spin" />
+								Creating account…
+							</>
+						) : (
+							"Create account"
+						)}
+					</Button>
+				</form>
+			</Form>
 
-					<div className="flex items-center gap-2 text-muted-foreground text-xs">
-						<span className="h-px flex-1 bg-border" />
-						OR
-						<span className="h-px flex-1 bg-border" />
-					</div>
+			<div className="flex items-center gap-2 text-muted-foreground text-xs">
+				<span className="h-px flex-1 bg-border" />
+				OR
+				<span className="h-px flex-1 bg-border" />
+			</div>
 
-					<SocialAuthButtons />
+			<SocialAuthButtons />
 
-					<p className="text-center text-muted-foreground text-sm">
-						Already have an account?{" "}
-						<Button
-							className="h-auto p-0"
-							onClick={onSwitchToSignIn}
-							variant="link"
-						>
-							Sign in
-						</Button>
-					</p>
-				</CardContent>
-			</Card>
-		</div>
+			<p className="text-center text-muted-foreground text-sm">
+				Already have an account?{" "}
+				<Button
+					className="h-auto p-0"
+					onClick={onSwitchToSignIn}
+					variant="link"
+				>
+					Sign in
+				</Button>
+			</p>
+		</AuthShell>
 	);
 }

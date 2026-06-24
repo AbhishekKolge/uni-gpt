@@ -3,13 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@uni-gpt/ui/components/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@uni-gpt/ui/components/card";
-import {
 	Form,
 	FormControl,
 	FormField,
@@ -28,6 +21,7 @@ import {
 	type ForgotPasswordValues,
 	forgotPasswordSchema,
 } from "../../utils/schema";
+import AuthShell from "../generic/auth-shell";
 
 export default function ForgotPasswordForm() {
 	const form = useForm<ForgotPasswordValues>({
@@ -52,53 +46,46 @@ export default function ForgotPasswordForm() {
 	const isSubmitting = form.formState.isSubmitting;
 
 	return (
-		<div className="mx-auto w-full max-w-md px-4 py-12">
-			<Card>
-				<CardHeader className="text-center">
-					<CardTitle className="text-2xl">Forgot password?</CardTitle>
-					<CardDescription>
-						Enter your email and we&apos;ll send you a reset link.
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					<Form {...form}>
-						<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Email</FormLabel>
-										<FormControl
-											render={
-												<Input autoComplete="email" type="email" {...field} />
-											}
-										/>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button className="w-full" disabled={isSubmitting} type="submit">
-								{isSubmitting ? (
-									<>
-										<Loader2Icon className="size-4 animate-spin" />
-										Sending…
-									</>
-								) : (
-									"Send reset link"
-								)}
-							</Button>
-						</form>
-					</Form>
-					<Link
-						className="flex items-center justify-center gap-1 text-muted-foreground text-sm transition-colors hover:text-foreground"
-						href="/login"
-					>
-						<ArrowLeftIcon className="size-4" />
-						Back to sign in
-					</Link>
-				</CardContent>
-			</Card>
-		</div>
+		<AuthShell
+			description="Enter your email and we'll send you a reset link."
+			title="Forgot password?"
+		>
+			<Form {...form}>
+				<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+					<FormField
+						control={form.control}
+						name="email"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Email</FormLabel>
+								<FormControl
+									render={
+										<Input autoComplete="email" type="email" {...field} />
+									}
+								/>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<Button className="w-full" disabled={isSubmitting} type="submit">
+						{isSubmitting ? (
+							<>
+								<Loader2Icon className="size-4 animate-spin" />
+								Sending…
+							</>
+						) : (
+							"Send reset link"
+						)}
+					</Button>
+				</form>
+			</Form>
+			<Link
+				className="flex items-center justify-center gap-1 text-muted-foreground text-sm transition-colors hover:text-foreground"
+				href="/login"
+			>
+				<ArrowLeftIcon className="size-4" />
+				Back to sign in
+			</Link>
+		</AuthShell>
 	);
 }

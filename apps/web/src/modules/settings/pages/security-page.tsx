@@ -86,7 +86,13 @@ export function SecurityPage() {
 	};
 
 	return (
-		<div className="mx-auto mt-10 w-full max-w-2xl space-y-6 p-6">
+		<div className="mx-auto w-full max-w-2xl space-y-6 px-4 py-8">
+			<div className="space-y-1">
+				<h1 className="font-semibold text-2xl tracking-tight">Security</h1>
+				<p className="text-muted-foreground text-sm">
+					Manage passkeys, active sessions, and your account.
+				</p>
+			</div>
 			<Card>
 				<CardHeader>
 					<CardTitle>Passkeys</CardTitle>
